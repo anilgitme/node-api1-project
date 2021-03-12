@@ -1,17 +1,17 @@
 // BUILD YOUR SERVER HERE
-const users = require('./users/model');
+const User = require('./users/model');
 const express = require('express');
 
 //express returns an instance of the server
 const server = express();
-
+server.use(express.json());
 // server.get('/', (req, res) => {
 //     res.json({message: 'hello world'})
 // })
 
 server.get('/api/users/:id', (req, res) => {
     const id = req.params.id;
-    users.find(id)
+    User.find(id)
         .then(user => {
             console.log(user);
             if (!user) {
@@ -26,7 +26,7 @@ server.get('/api/users/:id', (req, res) => {
 })
 
 server.get('api/users', (req, res) => {
-    users.find()
+    User.find()
         .then(user => {
             // console.log(user)
             res.status(200).json(user)
@@ -40,7 +40,7 @@ server.post('/api/users', (req, res) => {
     if (!req.body.name || !req.body.bio) {
         res.status(400).json({ message: 'Please provide name and bio for the user"' })
     } else {
-        users.insert({ name: req.body.name, bio: req.body.bio })
+        Users.insert({ name: req.body.name, bio: req.body.bio })
             .then((res) => {
                 res.status(201).json(res);
             })
@@ -56,7 +56,7 @@ server.put('/api/users/:id', async(req, res) => {
         if (!req.body.name || !req.body.bio) {
             res.status(400).json({ message: 'Please provide name and bio for the user' })
         } else {
-            const updateUser = await users.update(id, req.body)
+            const updateUser = await Users.update(id, req.body)
             if (!updateUser) {
                 res.status(404).json({ message: 'The user with the specified ID does not exist' })
             } else {
@@ -70,7 +70,7 @@ server.put('/api/users/:id', async(req, res) => {
 
 server.delete('/api/users/:id', async(req, res) => {
     try {
-        const deleteUser = await users.remove(req.params.id)
+        const deleteUser = await User.remove(req.params.id)
         if (!deleteUser) {
             res.status(404).json({ message: 'The user with the specified ID does not exist' })
         } else {
@@ -83,4 +83,4 @@ server.delete('/api/users/:id', async(req, res) => {
 
 
 
-module.exports = {}; // EXPORT YOUR SERVER instead of {}
+module.exports = { server }; // EXPORT YOUR SERVER instead of {}
